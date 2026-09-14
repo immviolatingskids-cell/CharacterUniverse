@@ -1,0 +1,65 @@
+{
+  "CAMERA_DEVICE": [
+    "iPhone 16 Pro rear camera, native iOS camera pipeline",
+    "Sony A7R V mirrorless camera body",
+    "Fujifilm X100VI compact digital camera",
+    "Canon EOS R5 full-frame mirrorless"
+  ],
+  "LENS_SPECS": [
+    "24mm equivalent wide-angle lens, subtle perspective distortion",
+    "35mm f/1.8 handheld street lens, natural eye-level field of view",
+    "50mm f/1.4 prime lens, sharp focal plane",
+    "85mm f/1.4 portrait lens, creamy smooth background bokeh",
+    "135mm f/2.0 candid telephoto lens"
+  ],
+  "COMPOSITION_FRAMING": [
+    "candid waist-up medium portrait framing",
+    "tight high-detail upper-body shot",
+    "slightly low-angle handheld perspective",
+    "eye-level candid composition, rule of thirds",
+    "arm's-length high selfie angle"
+  ],
+  "CAPTURE_INTENT": [
+    "friend took the photo candidly from across the table",
+    "tripod timer shot, carefully framed but natural posture",
+    "phone balanced on a stack of books or shelf, self-timer angle",
+    "accidental candid moment, caught mid-movement",
+    "professional editorial fashion shoot setup",
+    "content creator behind-the-scenes (BTS) capture"
+  ],
+  "MICRO_EXPRESSION": [
+    "subtle, quiet smile with a gentle eye crinkle",
+    "soft, relaxed neutral gaze looking directly into the lens",
+    "eyes focused downward in deep concentration",
+    "looking slightly past the camera, lost in thought",
+    "closed-mouth soft grin",
+    "biting her lower lip slightly while concentrating",
+    "slightly raised eyebrow with a curious, playful expression"
+  ],
+  "TIME_OF_DAY": [
+    "early morning sunrise light",
+    "bright midday overhead sun",
+    "golden hour late afternoon",
+    "blue hour dusk",
+    "late night midnight hours"
+  ],
+  "WEATHER": [
+    "crisp clear skies",
+    "soft diffused overcast clouds",
+    "light misty rain outside",
+    "heavy fog filtering soft glow",
+    "gentle falling snow visible through windows"
+  ],
+  "LIGHTING_BEHAVIOR": [
+    "soft directional window illumination with subtle shadow falloff",
+    "diffused bounce light creating even, natural skin highlights",
+    "warm tungsten desk lamp light mixed with cool natural ambient light",
+    "soft computer monitor glow reflecting subtly on skin and eyes"
+  ],
+  "COLOUR_SIMULATION": [
+    "natural warm color grading with soft neutrals and clean skin tones",
+    "Fujifilm Classic Chrome film simulation with subtle muted greens and deep shadows",
+    "clean, high-key modern HDR social media aesthetic",
+    "low-contrast editorial color palette with rich dark tones"
+  ]
+}

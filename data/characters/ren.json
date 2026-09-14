@@ -1,0 +1,30 @@
+{
+  "id": "ren",
+  "name": "Ren",
+  "identity": {
+    "core": "androgynous young adult with warm brown skin, sharp features, and a calm observant gaze",
+    "hair_base": "short silver hair with an asymmetrical fringe"
+  },
+  "themes": {
+    "1. Neon Courier": {
+      "CASTING": [
+        "androgynous young adult with warm brown skin, sharp features, and a calm observant gaze"
+      ],
+      "HAIR_STYLING": [
+        "short silver hair with an asymmetrical fringe"
+      ],
+      "WARDROBE": [
+        "black technical jacket with reflective piping and a compact cross-body utility pack"
+      ],
+      "LOCATION": [
+        "rainy neon-lit elevated walkway in a dense futuristic city"
+      ],
+      "PROPS": [
+        "weatherproof courier case with a small glowing status display"
+      ],
+      "ACTION": [
+        "walking quickly through the rain while checking a route on a transparent wrist display"
+      ]
+    }
+  }
+}

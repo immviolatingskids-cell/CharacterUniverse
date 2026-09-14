@@ -1,0 +1,505 @@
+Phase 1 — Define the data model
+
+This is the most important architectural stage.
+
+Instead of this:
+
+reference.py
+    Miyuki
+    Miyuki clothes
+    Miyuki locations
+    camera pools
+    lighting
+    everything else
+
+move toward:
+
+data/
+    characters/
+    packs/
+    global/
+
+A character owns things that make the character that character.
+
+identity
+physical traits
+signature features
+defaults
+preferences
+
+A pack owns reusable content.
+
+streetwear
+cyberpunk
+cozy home
+Tokyo
+summer
+formal
+gaming
+fantasy
+
+Global pools hold universally reusable technical choices.
+
+camera
+lens
+composition
+lighting
+weather
+colour grading
+capture intent
+
+Your current LOCKED_CORE_IDENTITY and LOCKED_HAIR_BASE already point toward the idea of separating immutable identity from variable styling.
+
+I'd introduce three states for fields fairly early:
+
+LOCKED
+PREFERRED
+RANDOMIZABLE
+
+That gives the engine much more freedom later.
+
+Milestone:
+Miyuki exists as data files rather than Python constants, but nothing visible to the user has changed yet.
+
+Phase 2 — Build the data loader
+
+Now reference.py stops being the giant library.
+
+It becomes something closer to:
+
+load_character()
+load_pack()
+load_global_pool()
+validate_pack()
+
+You can keep it named reference.py for a while if you want, but eventually I'd probably split this into something like:
+
+data_loader.py
+models.py
+
+At this stage, I'd strongly consider either Python dataclasses or Pydantic models.
+
+For example:
+
+class PoolEntry:
+    id: str
+    text: str
+    tags: list[str]
+    excludes: list[str]
+
+You don't have to fill all those fields immediately. The schema can grow with the project.
+
+Milestone:
+The current Miyuki CLI runs using JSON-backed content instead of hardcoded Python lists.
+
+This is probably your first excellent Codex task.
+
+Phase 3 — Generalize the core engine
+
+This is where the project stops being “the Miyuki generator.”
+
+Currently img.py explicitly iterates:
+
+["CASTING", "HAIR_STYLING", "WARDROBE", "LOCATION", "PROPS", "ACTION"]
+
+which means the generator itself knows what a Miyuki theme looks like.
+
+Instead, the engine should receive a configuration describing available blocks.
+
+Something like:
+
+character
+hair
+wardrobe
+accessories
+expression
+pose
+action
+environment
+props
+camera
+lighting
+
+The engine shouldn't particularly care whether it is generating:
+
+Miyuki in Shibuya
+a fantasy knight
+a cyberpunk courier
+a completely new character
+
+It should just resolve blocks.
+
+This is also where I would separate:
+
+selector
+resolver
+prompt compiler
+AI enhancer
+
+So Gemini stops being mixed into selection logic.
+
+Conceptually:
+
+SceneRequest
+     ↓
+Selector
+     ↓
+Compatibility Resolver
+     ↓
+Seed Matrix
+     ↓
+Prompt Compiler
+     ↓
+Gemini Enhancer
+
+Milestone:
+You can create a second completely different character without touching engine code.
+
+That is the moment the architecture has properly succeeded.
+
+Phase 4 — Introduce compatibility tags
+
+Don't make the randomizer “smart” too early.
+
+Start with pure randomness.
+
+Once the expanded library begins producing rubbish, introduce lightweight tags.
+
+Example:
+
+{
+  "id": "wool_trench_01",
+  "text": "oversized heavy wool trench coat",
+  "tags": ["winter", "streetwear", "outerwear"],
+  "exclude": ["tropical", "swimwear"]
+}
+
+Scenes might similarly have:
+
+{
+  "id": "tropical_beach",
+  "tags": ["summer", "hot", "outdoors"]
+}
+
+Then compatibility is normal Python logic rather than AI reasoning.
+
+Later you can add things like:
+
+requires
+prefers
+excludes
+season
+setting
+gender-neutral
+formality
+era
+aesthetic
+
+But only add a taxonomy when the actual content library forces you to.
+
+Milestone:
+Randomization usually gives coherent combinations while still occasionally producing interesting surprises.
+
+Phase 5 — Build Populator v1
+
+Keep this gloriously dumb.
+
+Something like:
+
+python populate.py
+
+Then:
+
+Category:
+> hairstyles
+
+Pack:
+> cyberpunk
+
+Number of candidates:
+> 50
+
+Gemini generates structured JSON into:
+
+data/incoming/cyberpunk_hairstyles.json
+
+Crucially:
+
+incoming content does not automatically become production content.
+
+You review it first.
+
+The tool should eventually support:
+
+generate
+validate
+dedupe
+approve
+reject
+import
+
+But v1 only needs:
+
+generate → file
+
+Your human curation is the quality filter.
+
+Milestone:
+You can generate 100 candidate entries, edit them offline, then import the ones you want.
+
+Phase 6 — Local library/editor
+
+Once editing JSON by hand becomes annoying, then build tooling around it.
+
+This can initially just be another CLI.
+
+Eventually the web app gets a Library section:
+
+Clothing              483
+Hairstyles            192
+Accessories           271
+Locations             143
+Actions               231
+Camera presets         54
+
+Each item can be:
+
+Edit
+Duplicate
+Disable
+Delete
+Tag
+Move to pack
+
+You could also have:
+
+Export pack
+Import pack
+
+That makes the whole thing portable.
+
+You could literally share something like:
+
+cyberpunk_tokyo.pack.json
+
+with yourself on another machine.
+
+Milestone:
+You no longer need to touch Python to add content.
+
+That's a big usability threshold.
+
+Phase 7 — Clean API layer
+
+Only once the engine API feels stable would I build the actual FastAPI interface properly.
+
+Your existing FastAPI experiment proves the concept, but right now it contains its own randomization and Gemini orchestration.
+
+Eventually the server should be extremely boring.
+
+For example:
+
+GET  /characters
+GET  /characters/{id}
+
+GET  /packs
+GET  /library/{category}
+
+POST /scene/randomize
+POST /scene/resolve
+POST /prompt/generate
+
+POST /library/items
+PATCH /library/items/{id}
+DELETE /library/items/{id}
+
+FastAPI should call the engine.
+
+The engine should not depend on FastAPI.
+
+That matters because you still want:
+
+python cli.py
+
+to work.
+
+Milestone:
+CLI and website both use the exact same engine.
+
+Phase 8 — Mobile-first UI
+
+This is where your UI/UX learning gets properly useful.
+
+Start with one screen.
+
+Character     Miyuki ▼
+
+Style
+[ Streetwear ] [ Cozy ] [ Tokyo ]
+
+Hair
+🔒 Long loose waves                 🎲
+
+Wardrobe
+   Oversized charcoal hoodie        🎲
+
+Expression
+   Quiet smile                      🎲
+
+Scene
+   Apartment workstation            🎲
+
+Camera
+🔒 35mm candid                      🎲
+
+
+      🎲 RANDOMIZE
+
+      ✨ GENERATE
+
+Interactions matter more than visual fanciness.
+
+I would prioritise:
+
+tap to edit
+tap dice to randomize one block
+tap lock to preserve
+long-press / menu for alternatives
+randomize everything unlocked
+generate prompt
+copy prompt
+
+Then add a bottom nav later:
+
+Create
+Library
+Characters
+History
+
+Milestone:
+You can comfortably generate something from your phone with one hand.
+
+That is a fantastic design constraint, actually.
+
+Phase 9 — Prompt history and favourites
+
+This is where it starts feeling like a real personal tool.
+
+Save:
+
+character
+selected blocks
+seed
+generated prompt
+date
+favourite status
+
+Then you can:
+
+regenerate
+duplicate scene
+change outfit only
+reuse camera setup
+favourite combinations
+
+SQLite would probably be enough here.
+
+No need for a real external database.
+
+Milestone:
+You can return to a previous composition and modify one component.
+
+Phase 10 — Optional image generation
+
+Only after the prompt system feels genuinely good.
+
+At that point the pipeline becomes:
+
+Compose
+↓
+Generate Prompt
+↓
+Preview/Edit
+↓
+Generate Image
+
+That separation is useful because sometimes you'll want the prompt without the image.
+
+And it leaves you free to swap image providers later.
+
+Where AI belongs
+
+I’d draw a very deliberate boundary.
+
+AI-assisted:
+
+bulk pool population
+candidate tagging
+optional deduplication suggestions
+prompt prose synthesis
+maybe pack creation
+
+Normal Python:
+
+characters
+randomization
+locks
+selection
+compatibility
+filtering
+storage
+history
+pack management
+UI state
+
+That's how you avoid accidentally building a system where Gemini has to decide everything.
+
+AI becomes a creative amplifier, not your application architecture.
+
+What I would not build yet
+
+I would deliberately avoid:
+
+accounts
+cloud sync
+authentication
+vector databases
+embeddings
+AI agents
+complex relational DBs
+Docker/Kubernetes nonsense
+massive frontend frameworks unless you actually want to learn one
+
+None of those improve the thing you're trying to make right now.
+
+The charm of this project is that it can stay small and weirdly capable.
+
+The next four concrete milestones
+
+If we compress the roadmap down to what matters now:
+
+A — Externalise the content
+
+reference.py
+↓
+JSON characters + packs + global pools
+
+B — Make the engine generic
+
+Miyuki-specific generator
+↓
+character-agnostic scene composer
+
+C — Build the populator
+
+Gemini → candidate JSON → human curation → library
+
+D — Put a phone UI on top
+
+FastAPI engine
++
+simple responsive web frontend
+
+If those four things work, you've basically reached v1.
+
+Everything after that is refinement.

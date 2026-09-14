@@ -1,0 +1,19 @@
+{
+  "id": "streetwear",
+  "name": "Tokyo Streetwear",
+  "entries": {
+    "WARDROBE": [
+      {
+        "text": "oversized charcoal hoodie with clean structural lines",
+        "tags": ["streetwear", "casual"],
+        "exclude": ["formal"]
+      },
+      "washed black graphic tee with minimalist Tokyo typography",
+      "neutral oversized trench coat over a monochrome outfit"
+    ],
+    "ACCESSORIES": [
+      "minimalist cross-body bag",
+      "clean white low-profile sneakers"
+    ]
+  }
+}

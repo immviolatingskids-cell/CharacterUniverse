@@ -1,0 +1,12 @@
+# Ignore all log files
+*.log
+# Ignore all executables
+*.exe
+# Ignore the build directory
+/build/
+# Ignore specific file in config folder
+/api/
+__pycache__/
+prompt.txt
+.env
+*.sqlite3
